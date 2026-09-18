@@ -7,13 +7,16 @@ import { BetSlip, type BetDraft } from "@/components/exchange/BetSlip";
 import { ExposurePanel } from "@/components/exchange/ExposurePanel";
 import { OpenOrders } from "@/components/exchange/OpenOrders";
 import { MarketFeed } from "@/components/exchange/MarketFeed";
+import { BettingNotebook } from "@/components/exchange/BettingNotebook";
 import { SignatureFooter } from "@/components/exchange/SignatureFooter";
 import { useExchange } from "@/hooks/useExchange";
+import { useSavedBets } from "@/hooks/useSavedBets";
 import type { PlaceRequest } from "@/lib/exchange/engine";
 import type { Side } from "@/lib/exchange/types";
 
 export default function Home() {
     const exchange = useExchange();
+    const notebook = useSavedBets();
     const [draft, setDraft] = useState<BetDraft | null>(null);
 
     const pick = (selectionId: string, side: Side, price: number) => {
@@ -43,6 +46,14 @@ export default function Home() {
                         matched by price, then by time — exactly how the real order book behaves.
                     </p>
                     <MarketFeed feed={exchange.feed} />
+                    <BettingNotebook
+                        bets={notebook.bets}
+                        loading={notebook.loading}
+                        error={notebook.error}
+                        onSave={notebook.save}
+                        onAmend={notebook.amend}
+                        onRemove={notebook.remove}
+                    />
                 </div>
 
                 <aside className="flex flex-col gap-4">
