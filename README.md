@@ -25,6 +25,34 @@ It was built as a portfolio piece around Betfair's core product, the Exchange.
 - **Market simulator** that streams counter-orders so liquidity moves, fills happen and the
   ladder breathes like a real market.
 
+## Betting notebook (CRUD)
+
+Alongside the live board there is a persisted **betting notebook** — a small record of the
+bets you are tracking, exposed over a REST API and managed from the UI.
+
+| Method   | Route            | Purpose                          |
+| -------- | ---------------- | -------------------------------- |
+| `GET`    | `/api/bets`      | List saved bets (newest first)   |
+| `POST`   | `/api/bets`      | Create a bet                     |
+| `GET`    | `/api/bets/:id`  | Read one bet                     |
+| `PATCH`  | `/api/bets/:id`  | Amend stake / price / note / status |
+| `DELETE` | `/api/bets/:id`  | Delete a bet                     |
+
+The storage sits behind a `BetRepository` interface (an in-memory implementation ships here),
+and a `BetService` owns validation and the open → settled lifecycle. Both the clock and the id
+generator are injected so the logic is deterministic under test.
+
+## Testing
+
+The suite follows the usual pyramid:
+
+- **Unit** — the repository and the validating service (`src/lib/bets/*.test.ts`) and the
+  matching engine (`src/lib/exchange/engine.test.ts`).
+- **Feature / integration** — the REST handlers driven with real `Request` objects, asserting
+  the full CRUD cycle and the 400/404 paths (`src/app/api/bets/bets.api.test.ts`).
+- **End to end** — a Playwright spec that creates, edits, settles and deletes a bet through the
+  browser (`e2e/notebook.spec.ts`).
+
 ## Architecture
 
 The domain logic is pure TypeScript with no framework coupling, which keeps it testable and
@@ -63,7 +91,8 @@ Then open the URL printed by the dev server (this project uses port **43117**).
 | ------------------- | ------------------------------------ |
 | `npm run dev`       | Start the dev server                 |
 | `npm run build`     | Production build                     |
-| `npm run test`      | Run the engine unit tests (Vitest)   |
+| `npm run test`      | Unit + feature tests (Vitest)        |
+| `npm run test:e2e`  | End-to-end tests (Playwright)        |
 | `npm run typecheck` | Type-check with no emit              |
 | `npm run lint`      | ESLint                               |
 
