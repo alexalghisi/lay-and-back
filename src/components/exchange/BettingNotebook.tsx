@@ -67,7 +67,7 @@ function BetRow({ bet, onAmend, onRemove }: { bet: Bet } & Pick<BettingNotebookP
                 </div>
                 <button
                     type="button"
-                    onClick={() => onRemove(bet.id)}
+                    onClick={() => { void onRemove(bet.id); }}
                     aria-label={`Delete ${bet.side} on ${bet.selectionName}`}
                     className="rounded-md border border-border px-2 py-1 text-xs text-muted hover:border-loss hover:text-loss"
                 >
@@ -96,7 +96,7 @@ function BetRow({ bet, onAmend, onRemove }: { bet: Bet } & Pick<BettingNotebookP
                     <select
                         value={bet.status}
                         aria-label={`Status for ${bet.selectionName}`}
-                        onChange={(event) => onAmend(bet.id, { status: event.target.value as BetStatus })}
+                        onChange={(event) => { void onAmend(bet.id, { status: event.target.value as BetStatus }); }}
                         className={`rounded-md border border-border bg-panel px-2 py-1 ${statusTone(bet.status)}`}
                     >
                         {(Object.keys(STATUS_LABELS) as BetStatus[]).map((value) => (

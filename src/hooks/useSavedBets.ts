@@ -54,22 +54,34 @@ export function useSavedBets() {
     }, []);
 
     const amend = useCallback(async (id: string, patch: BetPatch) => {
-        const updated = await parse<Bet>(
-            await fetch(`${ENDPOINT}/${id}`, {
-                method: "PATCH",
-                headers: { "content-type": "application/json" },
-                body: JSON.stringify(patch),
-            }),
-        );
-        setBets((current) => current.map((bet) => (bet.id === id ? updated : bet)));
+        try {
+            const updated = await parse<Bet>(
+                await fetch(`${ENDPOINT}/${id}`, {
+                    method: "PATCH",
+                    headers: { "content-type": "application/json" },
+                    body: JSON.stringify(patch),
+                }),
+            );
+            setBets((current) => current.map((bet) => (bet.id === id ? updated : bet)));
+            setError(null);
+        } catch (cause) {
+            setError((cause as Error).message);
+            throw cause;
+        }
     }, []);
 
     const remove = useCallback(async (id: string) => {
-        const response = await fetch(`${ENDPOINT}/${id}`, { method: "DELETE" });
-        if (!response.ok) {
-            throw new Error("Could not delete bet");
+        try {
+            const response = await fetch(`${ENDPOINT}/${id}`, { method: "DELETE" });
+            if (!response.ok) {
+                throw new Error("Could not delete bet");
+            }
+            setBets((current) => current.filter((bet) => bet.id !== id));
+            setError(null);
+        } catch (cause) {
+            setError((cause as Error).message);
+            throw cause;
         }
-        setBets((current) => current.filter((bet) => bet.id !== id));
     }, []);
 
     return { bets, loading, error, save, amend, remove };
