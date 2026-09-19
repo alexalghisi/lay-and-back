@@ -75,4 +75,13 @@ describe("bets API", () => {
         const missing = await getBet(new Request("http://localhost"), context(bet.id));
         expect(missing.status).toBe(404);
     });
+
+    it("refuses to reprice a settled bet", async () => {
+        const bet = await (await createBet(postRequest(payload))).json();
+        await patchBet(patchRequest({ status: "won" }), context(bet.id));
+
+        const blocked = await patchBet(patchRequest({ stake: 80 }), context(bet.id));
+        expect(blocked.status).toBe(400);
+        expect((await blocked.json()).error).toMatch(/open/i);
+    });
 });
