@@ -9,6 +9,12 @@ loss maths that sit behind every screen on an exchange.
 
 It was built as a portfolio piece around Betfair's core product, the Exchange.
 
+## After you run it
+
+This is a live session of the app — the back/lay board ticking, a bet going on the slip, profit and loss updating, and a tracked bet landing in the notebook.
+
+<img src="docs/demo.gif" alt="Lay & Back running: live order book, bet slip, profit and loss, and the betting notebook" width="960" height="615" />
+
 ## What it does
 
 - **Live order book** per selection with the familiar three-deep back (blue) / lay (pink)
@@ -60,17 +66,12 @@ lets the same code run identically on the server and the client (no hydration mi
 
 ```
 src/
-  lib/exchange/
-    types.ts     domain model (orders, fills, books)
-    odds.ts      decimal odds ladder, tick sizes, profit / liability maths
-    engine.ts    order book + matching engine + P&L
-    market.ts    market definition, seeded RNG, liquidity simulator
-    format.ts    deterministic display helpers
-    engine.test.ts  unit tests for matching, ladder and P&L
-  hooks/
-    useExchange.ts   React state on top of the engine
+  lib/exchange/    matching engine, odds ladder, market simulator
+  lib/bets/        notebook ledger: repository, service, HTTP mapping
+  hooks/           React state for the live book and the ledger
   components/exchange/  presentational UI
-  app/             Next.js App Router entry
+  app/api/bets/    REST CRUD for the notebook
+  e2e/             Playwright coverage of the notebook flow
 ```
 
 The matching engine is deterministic and side-effect free at its boundaries, so the whole
