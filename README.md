@@ -7,6 +7,8 @@ house, an exchange matches customers against each other: one person **backs** an
 that market — a live order book, a price/time-priority matching engine, and the profit &
 loss maths that sit behind every screen on an exchange.
 
+**Download:** [latest release](https://github.com/alexalghisi/lay-and-back/releases/latest)
+
 It was built as a portfolio piece around Betfair's core product, the Exchange.
 
 ## After you run it
